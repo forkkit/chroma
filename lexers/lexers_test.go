@@ -38,6 +38,12 @@ func TestGet(t *testing.T) {
 	})
 }
 
+func BenchmarkGet(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		lexers.Get("go")
+	}
+}
+
 // Test source files are in the form <key>.<key> and validation data is in the form <key>.<key>.expected.
 func TestLexers(t *testing.T) {
 	files, err := ioutil.ReadDir("testdata")
@@ -49,7 +55,8 @@ func TestLexers(t *testing.T) {
 			continue
 		}
 
-		lexer := lexers.Get(strings.TrimSuffix(file.Name(), filepath.Ext(file.Name())))
+		base := strings.Split(strings.TrimSuffix(file.Name(), filepath.Ext(file.Name())), "-")[0]
+		lexer := lexers.Get(base)
 		assert.NotNil(t, lexer)
 
 		filename := filepath.Join("testdata", file.Name())
